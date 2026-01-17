@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Layout } from './components/Layout';
 import { Hero } from './components/Hero';
 import { ProductCard } from './components/ProductCard';
@@ -13,6 +13,15 @@ import { PRODUCTS } from './constants';
 
 const App: React.FC = () => {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, clientWidth } = scrollContainerRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+      scrollContainerRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   return (
     <Layout>
@@ -69,8 +78,8 @@ const App: React.FC = () => {
       {/* ROI Calculator Feature */}
       <ROICalculator />
 
-      {/* Product Catalog */}
-      <section className="py-24 bg-white" id="products">
+      {/* Product Catalog Carousel */}
+      <section className="py-24 bg-white overflow-hidden" id="products">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
             <div>
@@ -79,17 +88,58 @@ const App: React.FC = () => {
                 Precision-engineered sensors and analyzers designed to withstand the harshest chemical environments in Indian industry.
               </p>
             </div>
-            <div className="flex gap-3">
-              <button className="px-5 py-2.5 rounded-full bg-blue-600 text-white font-semibold text-sm shadow-lg shadow-blue-500/20">All Catalog</button>
-              <button className="px-5 py-2.5 rounded-full bg-slate-100 text-slate-600 font-semibold text-sm hover:bg-slate-200 transition-colors">Digital Sensors</button>
-              <button className="px-5 py-2.5 rounded-full bg-slate-100 text-slate-600 font-semibold text-sm hover:bg-slate-200 transition-colors">Multi-Analyzers</button>
+            <div className="flex items-center gap-4">
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => scroll('left')}
+                  className="p-3 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all active:scale-90"
+                  aria-label="Previous products"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button 
+                  onClick={() => scroll('right')}
+                  className="p-3 rounded-full border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all active:scale-90"
+                  aria-label="Next products"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+              <div className="h-8 w-px bg-slate-200 hidden md:block mx-2"></div>
+              <div className="hidden md:flex gap-3">
+                <button className="px-5 py-2.5 rounded-full bg-blue-600 text-white font-semibold text-sm shadow-lg shadow-blue-500/20">All Catalog</button>
+                <button className="px-5 py-2.5 rounded-full bg-slate-100 text-slate-600 font-semibold text-sm hover:bg-slate-200 transition-colors">Sensors</button>
+              </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div 
+            ref={scrollContainerRef}
+            className="flex gap-8 overflow-x-auto pb-12 scrollbar-hide snap-x snap-mandatory"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {PRODUCTS.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <div key={product.id} className="min-w-[280px] sm:min-w-[320px] lg:min-w-[350px] snap-start">
+                <ProductCard product={product} />
+              </div>
             ))}
+            {/* Additional cards for filling the carousel space if needed */}
+            {PRODUCTS.map(product => (
+              <div key={`${product.id}-repeat`} className="min-w-[280px] sm:min-w-[320px] lg:min-w-[350px] snap-start">
+                <ProductCard product={product} />
+              </div>
+            ))}
+          </div>
+          
+          {/* Progress Indicator */}
+          <div className="flex justify-center gap-2 mt-4">
+             {[...Array(2)].map((_, i) => (
+                <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'w-8 bg-blue-600' : 'w-2 bg-slate-200'}`}></div>
+             ))}
           </div>
         </div>
       </section>

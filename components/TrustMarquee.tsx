@@ -8,7 +8,7 @@ export const TrustMarquee: React.FC = () => {
     <div className="bg-slate-50 py-12 border-y border-slate-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <p className="text-center text-xs font-bold text-slate-400 uppercase tracking-[0.3em]">
-          Trusted by 500+ Global Enterprises
+          Trusted by Global Enterprises
         </p>
       </div>
       <div className="relative flex overflow-x-hidden">

@@ -15,7 +15,7 @@ export const ProductAdvisor: React.FC = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, loading]);
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
@@ -33,6 +33,21 @@ export const ProductAdvisor: React.FC = () => {
 
   return (
     <div className="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl flex flex-col h-[600px] border border-slate-800">
+      <style>{`
+        @keyframes scan-horizontal {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(300%); }
+        }
+        @keyframes data-pulse {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 1; }
+        }
+        @keyframes text-flicker {
+          0%, 100% { opacity: 0.8; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
+
       <div className="p-6 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
@@ -67,12 +82,34 @@ export const ProductAdvisor: React.FC = () => {
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-slate-800 px-5 py-3 rounded-2xl rounded-bl-none">
-              <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"></div>
-                <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div className="bg-slate-800 p-1 rounded-2xl rounded-bl-none overflow-hidden relative">
+              <div className="px-5 py-4 space-y-3 min-w-[240px]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1 items-end h-3">
+                      <div className="w-1 bg-blue-500 rounded-full animate-[data-pulse_0.6s_infinite]"></div>
+                      <div className="w-1 bg-blue-400 rounded-full animate-[data-pulse_0.6s_infinite_0.1s]"></div>
+                      <div className="w-1 bg-blue-300 rounded-full animate-[data-pulse_0.6s_infinite_0.2s]"></div>
+                    </div>
+                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest animate-[text-flicker_2s_infinite]">Consulting Database</span>
+                  </div>
+                  <div className="text-[9px] font-mono text-slate-500">v4.0.2</div>
+                </div>
+
+                <div className="h-1.5 w-full bg-slate-700/50 rounded-full overflow-hidden relative border border-slate-700">
+                   <div className="absolute top-0 left-0 h-full w-1/4 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-[scan-horizontal_2s_linear_infinite]"></div>
+                   <div className="h-full w-full bg-blue-600/10"></div>
+                </div>
+
+                <div className="flex justify-between items-center text-[9px] font-mono text-slate-500">
+                  <div className="flex items-center gap-1">
+                    <span className="animate-pulse">●</span>
+                    <span>CROSS-REF INDUSTRIAL CATALOG...</span>
+                  </div>
+                  <span className="text-blue-500/50">89% COMPLETED</span>
+                </div>
               </div>
+              <div className="absolute inset-0 pointer-events-none border border-blue-500/10 rounded-2xl"></div>
             </div>
           </div>
         )}
